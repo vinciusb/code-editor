@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
-import styled from 'styled-components'
+import PropTypes from 'prop-types';
+import styled from 'styled-components';
 
 const Styled = {
     CodeEditor: styled.div`
@@ -13,7 +14,7 @@ const Styled = {
             resize: none;
         }
     `,
-}
+};
 
 function CodeEditor(props) {
     const [code, setCode] = useState('');
@@ -24,19 +25,27 @@ function CodeEditor(props) {
 
     useEffect(() => {
         // If should transfer the code to the app
-        if(props.shouldTransfer) {
+        if (props.shouldTransfer) {
             props.handleCodeTransfer(code, props.id);
         }
-    },[props.shouldTransfer]);
+    }, [props.shouldTransfer]);
 
     return (
         <Styled.CodeEditor>
             <header>
                 <h1>{ props.lang }</h1>
             </header>
-            <textarea id={`${props.lang}-editor`} value={ code } onChange={ handleTextChange }></textarea>
+            <textarea id={`${props.lang}-editor`} value={code} onChange={handleTextChange} />
         </Styled.CodeEditor>
     );
 }
+
+CodeEditor.propTypes = {
+    id: PropTypes.number.isRequired,
+    lang: PropTypes.string.isRequired,
+    logo: PropTypes.element.isRequired,
+    handleCodeTransfer: PropTypes.func.isRequired,
+    shouldTransfer: PropTypes.bool.isRequired,
+};
 
 export default CodeEditor;
