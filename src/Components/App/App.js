@@ -13,23 +13,24 @@ const Styled = {
         display: flex;
         flex-flow: column;
 
-        & > main {
-        height: 100%;
-        }
         & .button:hover {
-        cursor: pointer;
-        background-color: rgb(230, 230, 230);
+            cursor: pointer;
+            background-color: rgb(230, 230, 230);
         }
-        & .CodeResult {
-        background-color: blue;
-        height: 50%;
-        }
+    `,
+    Main: styled.div`
+        height: 100%;
+
+        display: grid;
+        grid-template-rows: ${(props) => `${props.proportion[0]}fr ${props.proportion[1]}fr`};
+        align-items: stretch;
     `,
 };
 
 function App() {
-    const [shouldTransfer, setShouldTransfer] = useState(false);
     const [sourceCodes, setSourceCodes] = useState(['', '', '']);
+    const [shouldTransfer, setShouldTransfer] = useState(false);
+    const [sectionsProportion, setSectionsProportion] = useState([1, 1]);
 
     function injectCode() {
         setShouldTransfer(true);
@@ -45,13 +46,11 @@ function App() {
             <header>
                 <div className="button" onClick={injectCode}>RELOAD</div>
             </header>
-            <main>
+            <Styled.Main proportion={sectionsProportion}>
                 <Editors transfer={shouldTransfer} onTransfer={getSourceCode} />
 
-                <div className="CodeResult">
-                    <CodeCompiler codes={sourceCodes} />
-                </div>
-            </main>
+                <CodeCompiler codes={sourceCodes} />
+            </Styled.Main>
         </Styled.App>
     );
 }

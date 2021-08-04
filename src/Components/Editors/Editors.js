@@ -7,7 +7,6 @@ import CodeEditor from '../CodeEditor/CodeEditor';
 const Styled = {
     Editors: styled.div`
         background-color: red;
-        height: 50%;
 
         display: grid;
         grid-template-columns: ${(props) => `${props.proportion[0]}fr ${props.proportion[1]}fr ${props.proportion[2]}fr`};
