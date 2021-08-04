@@ -1,75 +1,43 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
 
-import CodeEditor from '../CodeEditor/CodeEditor';
+import Editors from '../Editors/Editors';
 import CodeCompiler from '../CodeCompiler/CodeCompiler';
 
 const Styled = {
     App: styled.div`
-    text-align: center;
-    width: 100%;
-    height: 100%;
+        text-align: center;
+        width: 100%;
+        height: 100%;
 
-    display: flex;
-    flex-flow: column;
+        display: flex;
+        flex-flow: column;
 
-    & > main {
-      height: 100%;
-    }
-    & .button:hover {
-      cursor: pointer;
-      background-color: rgb(230, 230, 230);
-    }
-    & .CodeResult {
-      background-color: blue;
-      height: 50%;
-    }
-  `,
-    Editors: styled.div`
-    background-color: red;
-    height: 50%;
-
-    display: grid;
-    grid-template-columns: ${(props) => `${props.proportion[0]}fr ${props.proportion[1]}fr ${props.proportion[2]}fr`};
-    justify-content: stretch;
-  `,
+        & > main {
+        height: 100%;
+        }
+        & .button:hover {
+        cursor: pointer;
+        background-color: rgb(230, 230, 230);
+        }
+        & .CodeResult {
+        background-color: blue;
+        height: 50%;
+        }
+    `,
 };
 
 function App() {
-    const [isTransferCode, setIsTransferCode] = useState(false);
+    const [shouldTransfer, setShouldTransfer] = useState(false);
     const [sourceCodes, setSourceCodes] = useState(['', '', '']);
-    const [editorsProportion, setEdProportion] = useState([1, 1, 1]);
 
     function injectCode() {
-        setIsTransferCode(true);
+        setShouldTransfer(true);
     }
 
-    function getSourceCode(code, id) {
-        const newCode = sourceCodes.map((element, i) => (i === id ? code : element));
-        setSourceCodes(newCode);
-    }
-
-    function renderCodeEditors() {
-        const list = [];
-        const infos = [
-            { lang: 'html', logo: null },
-            { lang: 'css', logo: null },
-            { lang: 'js', logo: null },
-        ];
-        infos.forEach((obj, i) => {
-            list.push(
-                <CodeEditor
-                    key={i}
-                    id={i}
-                    lang={obj.lang}
-                    logo={obj.logo}
-                    handleCodeTransfer={getSourceCode}
-                    shouldTransfer={isTransferCode}
-                />,
-            );
-        });
-
-        return list;
+    function getSourceCode(codes) {
+        setSourceCodes(codes);
+        setShouldTransfer(false);
     }
 
     return (
@@ -78,12 +46,10 @@ function App() {
                 <div className="button" onClick={injectCode}>RELOAD</div>
             </header>
             <main>
-                <Styled.Editors proportion={editorsProportion}>
-                    {renderCodeEditors()}
-                </Styled.Editors>
+                <Editors transfer={shouldTransfer} onTransfer={getSourceCode} />
 
                 <div className="CodeResult">
-                    <CodeCompiler sourceCodes />
+                    <CodeCompiler codes={sourceCodes} />
                 </div>
             </main>
         </Styled.App>
