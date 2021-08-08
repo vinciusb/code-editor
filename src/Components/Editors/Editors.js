@@ -40,6 +40,13 @@ function Editors({ transfer, onTransfer }) {
         setSourceCodes(newCode);
     }
 
+    /*
+    TODO: -verificar pq a barra começa a crescer cada vez mais
+          -pq n da pra mudar a direção de caminho da barra
+          -pq a implementação, ao ter redução do segundo elementro [id + 1] p/
+           baixo do limite, faz com que ele vá pro [id] (implementei e ficou
+           travado, achar outra solução).
+    */
     function handleProportionsChange(change, id) {
         // Calculate how much to slide
         const contentSize = editors.current.clientWidth - 2 * paddingSize;
