@@ -6,12 +6,16 @@ const Styled = {
     CodeEditor: styled.div`
         display: flex;
         flex-flow: column;
+
         & h1 {
             margin: 0;
         }
         & textarea{
             height: 100%;
             resize: none;
+        }
+        & textarea:focus {
+            outline: none;
         }
     `,
 };
@@ -26,7 +30,7 @@ function CodeEditor({
     return (
         <Styled.CodeEditor>
             <header>
-                <h1>{ lang }</h1>
+                <h1>{ lang.toUpperCase() }</h1>
             </header>
             <textarea id={`${lang}-editor`} value={code} onChange={handleTextChange} />
         </Styled.CodeEditor>

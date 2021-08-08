@@ -4,6 +4,7 @@ import styled from 'styled-components';
 
 const Styled = {
     CodeCompiler: styled.div`
+        background-color: black;
         ${(props) => props.css}
     `,
 };

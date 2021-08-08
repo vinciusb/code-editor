@@ -1,26 +1,36 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
 
 import CodeEditor from '../CodeEditor/CodeEditor';
+import ResizeBar from '../ResizeBar/ResizeBar';
+
+const paddingSize = 20;
+const minSize = 0.4;
 
 const Styled = {
     Editors: styled.div`
-        background-color: red;
+        background-color: rgb(0,70,70);
+        color: white;
+        padding: 0 ${paddingSize}px;
 
         display: grid;
-        grid-template-columns: ${(props) => `${props.proportion[0]}fr ${props.proportion[1]}fr ${props.proportion[2]}fr`};
+        grid-template-columns:
+        ${(props) => `${props.proportion[0]}fr auto
+                      ${props.proportion[1]}fr auto
+                      ${props.proportion[2]}fr`};
         justify-content: stretch;
     `,
 };
 
 function Editors({ transfer, onTransfer }) {
+    const editors = useRef();
     const [sourceCodes, setSourceCodes] = useState(['', '', '']);
     const [editorsProportion, setEdProportion] = useState([1, 1, 1]);
 
     useEffect(() => {
         // Only when transfer is allowed
-        if (transfer) {
+        if(transfer) {
             onTransfer(sourceCodes);
         }
     }, [transfer]);
@@ -30,6 +40,28 @@ function Editors({ transfer, onTransfer }) {
         setSourceCodes(newCode);
     }
 
+    function handleProportionsChange(change, id) {
+        // Calculate how much to slide
+        const contentSize = editors.current.clientWidth - 2 * paddingSize;
+        const normalizedChange = change / contentSize;
+
+        const proportions = [...editorsProportion];
+
+        // Verify if size will not suprass the min-width of the code editor
+        for(let i = 0; i < 2; i++) {
+            if(proportions[id + i] + (-1) ** i * normalizedChange < minSize) {
+                proportions[id] = minSize;
+                proportions[id + 1] = 2 - minSize;
+                break;
+            }
+        }
+
+        // Apply the slide
+        proportions[id] += normalizedChange;
+        proportions[id + 1] -= normalizedChange;
+        setEdProportion(proportions);
+    }
+
     function renderCodeEditors() {
         const list = [];
         const infos = [
@@ -37,7 +69,7 @@ function Editors({ transfer, onTransfer }) {
             { lang: 'css', logo: null, id: 1 },
             { lang: 'js', logo: null, id: 2 },
         ];
-        infos.forEach((obj) => {
+        infos.forEach((obj, index) => {
             list.push(
                 <CodeEditor
                     key={obj.id}
@@ -47,6 +79,14 @@ function Editors({ transfer, onTransfer }) {
                     logo={obj.logo}
                     onTextChange={changeSourceCode}
                 />,
+                (index < infos.length - 1) && (
+                    <ResizeBar
+                        key={obj.id + infos.length}
+                        id={obj.id}
+                        isVertical
+                        onPropChange={handleProportionsChange}
+                    />
+                ),
             );
         });
 
@@ -54,7 +94,7 @@ function Editors({ transfer, onTransfer }) {
     }
 
     return (
-        <Styled.Editors proportion={editorsProportion}>
+        <Styled.Editors ref={editors} proportion={editorsProportion}>
             {renderCodeEditors()}
         </Styled.Editors>
     );
