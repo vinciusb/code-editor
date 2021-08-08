@@ -19,6 +19,7 @@ const Styled = {
         ${(props) => `${props.proportion[0]}fr auto
                       ${props.proportion[1]}fr auto
                       ${props.proportion[2]}fr`};
+    
         justify-content: stretch;
     `,
 };
@@ -41,40 +42,43 @@ function Editors({ transfer, onTransfer }) {
     }
 
     /*
-    TODO: -verificar pq a barra começa a crescer cada vez mais
-          -pq n da pra mudar a direção de caminho da barra
-          -pq a implementação, ao ter redução do segundo elementro [id + 1] p/
-           baixo do limite, faz com que ele vá pro [id] (implementei e ficou
-           travado, achar outra solução).
+    TODO: -pq dps de travar no minimo, a barra começa a deslizar meio travada
     */
-    function handleProportionsChange(change, id) {
-        // Calculate how much to slide
-        const contentSize = editors.current.clientWidth - 2 * paddingSize;
-        const normalizedChange = change / contentSize;
+    function handleProportionsChange(mouse, id) {
+        const start = id === 0 ? 0 : editorsProportion[0];
 
+        // Mouse and Content size ignoring padding
+        const contentSize = editors.current.clientWidth - 2 * paddingSize;
+        const mouseInsideDiv = mouse - paddingSize;
+        const normalizedMouse = 3 * (mouseInsideDiv / contentSize) - start;
+
+        // Copy proportions
         const proportions = [...editorsProportion];
 
-        // Verify if size will not suprass the min-width of the code editor
+        const totalSize = proportions[id] + proportions[id + 1];
+
+        proportions[id] = normalizedMouse;
+        proportions[id + 1] = totalSize - normalizedMouse;
+
+        // Min size: 0: 0-1 / 1: 1-0
         for(let i = 0; i < 2; i++) {
-            if(proportions[id + i] + (-1) ** i * normalizedChange < minSize) {
-                proportions[id] = minSize;
-                proportions[id + 1] = 2 - minSize;
+            if(proportions[id + i] < minSize) {
+                proportions[id + i] = minSize;
+                proportions[id + 1 - i] = totalSize - minSize;
                 break;
             }
         }
 
-        // Apply the slide
-        proportions[id] += normalizedChange;
-        proportions[id + 1] -= normalizedChange;
+        console.log(proportions);
         setEdProportion(proportions);
     }
 
     function renderCodeEditors() {
         const list = [];
         const infos = [
-            { lang: 'html', logo: null, id: 0 },
-            { lang: 'css', logo: null, id: 1 },
-            { lang: 'js', logo: null, id: 2 },
+            { lang: 'html', logo: <div />, id: 0 },
+            { lang: 'css', logo: <div />, id: 1 },
+            { lang: 'js', logo: <div />, id: 2 },
         ];
         infos.forEach((obj, index) => {
             list.push(

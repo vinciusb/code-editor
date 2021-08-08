@@ -20,24 +20,20 @@ function ResizeBar({
     id, isVertical, size, color, onPropChange,
 }) {
     // 0: Click, 1: Resize, 2: Stop
-    const [resizeStage, setResizeStage] = useState(2);
-    const [lastPosition, setLastPosition] = useState(0);
+    // const [resizeStage, setResizeStage] = useState(2);
 
-    function resize(e) {
-        if(e.type === 'mousedown') {
-            setResizeStage(0);
-            setLastPosition(e.clientX);
-            document.addEventListener('mouseup', resize);
-        }
-        else if(e.type === 'mouseup') {
-            setResizeStage(2);
-            document.removeEventListener('mouseup', resize);
-        }
-        else if(e.type === 'mousemove' && resizeStage < 2) {
-            setResizeStage(1);
-            const change = e.clientX - lastPosition;
-            onPropChange(change, id);
-        }
+    function handleMouseMove(e) {
+        onPropChange(e.clientX, id);
+    }
+
+    function handleMouseUp() {
+        document.removeEventListener('mouseup', handleMouseUp);
+        document.removeEventListener('mousemove', handleMouseMove);
+    }
+
+    function handleMouseDown() {
+        document.addEventListener('mouseup', handleMouseUp);
+        document.addEventListener('mousemove', handleMouseMove);
     }
 
     return (
@@ -45,9 +41,7 @@ function ResizeBar({
             isVertical={isVertical}
             size={size}
             color={color}
-            onMouseDown={resize}
-            onMouseUp={resize}
-            onMouseMove={resize}
+            onMouseDown={handleMouseDown}
         />
     );
 }

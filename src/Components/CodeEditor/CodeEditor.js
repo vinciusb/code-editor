@@ -6,9 +6,11 @@ const Styled = {
     CodeEditor: styled.div`
         display: flex;
         flex-flow: column;
+        padding: 10px;
 
         & h1 {
             margin: 0;
+            user-select: none;
         }
         & textarea{
             height: 100%;
