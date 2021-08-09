@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { } from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
 
@@ -19,11 +19,8 @@ const Styled = {
 function ResizeBar({
     id, isVertical, size, color, onPropChange,
 }) {
-    // 0: Click, 1: Resize, 2: Stop
-    // const [resizeStage, setResizeStage] = useState(2);
-
     function handleMouseMove(e) {
-        onPropChange(e.clientX, id);
+        onPropChange(isVertical ? e.clientX : e.clientY, id);
     }
 
     function handleMouseUp() {
@@ -47,7 +44,7 @@ function ResizeBar({
 }
 
 ResizeBar.defaultProps = {
-    size: 10,
+    size: 2,
     color: [200, 0, 200],
 };
 

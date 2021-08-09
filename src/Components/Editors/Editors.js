@@ -13,13 +13,13 @@ const Styled = {
         background-color: rgb(0,70,70);
         color: white;
         padding: 0 ${paddingSize}px;
+        user-select: none;
 
         display: grid;
         grid-template-columns:
         ${(props) => `${props.proportion[0]}fr auto
                       ${props.proportion[1]}fr auto
                       ${props.proportion[2]}fr`};
-    
         justify-content: stretch;
     `,
 };
@@ -60,7 +60,7 @@ function Editors({ transfer, onTransfer }) {
         proportions[id] = normalizedMouse;
         proportions[id + 1] = totalSize - normalizedMouse;
 
-        // Min size: 0: 0-1 / 1: 1-0
+        // Garants Min size: 0: 0-1 / 1: 1-0
         for(let i = 0; i < 2; i++) {
             if(proportions[id + i] < minSize) {
                 proportions[id + i] = minSize;
@@ -69,7 +69,6 @@ function Editors({ transfer, onTransfer }) {
             }
         }
 
-        console.log(proportions);
         setEdProportion(proportions);
     }
 
