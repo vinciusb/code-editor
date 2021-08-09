@@ -24,6 +24,9 @@ const Styled = {
         & > header {
             height: ${headerSize}px
         }
+        & > header div {
+            height: 100%
+        }
     `,
     Main: styled.div`
         height: 100%;

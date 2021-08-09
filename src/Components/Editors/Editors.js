@@ -2,6 +2,10 @@ import React, { useState, useEffect, useRef } from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
 
+import htmlIcon from './logos/html.png';
+import cssIcon from './logos/css.png';
+import jsIcon from './logos/js.png';
+
 import CodeEditor from '../CodeEditor/CodeEditor';
 import ResizeBar from '../ResizeBar/ResizeBar';
 
@@ -10,7 +14,7 @@ const minSize = 0.4;
 
 const Styled = {
     Editors: styled.div`
-        background-color: rgb(0,70,70);
+        background-color: rgb(40,42,53);
         color: white;
         padding: 0 ${paddingSize}px;
         user-select: none;
@@ -74,10 +78,11 @@ function Editors({ transfer, onTransfer }) {
 
     function renderCodeEditors() {
         const list = [];
+        console.log(cssIcon);
         const infos = [
-            { lang: 'html', logo: <div />, id: 0 },
-            { lang: 'css', logo: <div />, id: 1 },
-            { lang: 'js', logo: <div />, id: 2 },
+            { lang: 'html', logo: htmlIcon, id: 0 },
+            { lang: 'css', logo: cssIcon, id: 1 },
+            { lang: 'js', logo: jsIcon, id: 2 },
         ];
         infos.forEach((obj, index) => {
             list.push(
