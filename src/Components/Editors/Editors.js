@@ -45,9 +45,6 @@ function Editors({ transfer, onTransfer }) {
         setSourceCodes(newCode);
     }
 
-    /*
-    TODO: -pq dps de travar no minimo, a barra começa a deslizar meio travada
-    */
     function handleProportionsChange(mouse, id) {
         const start = id === 0 ? 0 : editorsProportion[0];
 

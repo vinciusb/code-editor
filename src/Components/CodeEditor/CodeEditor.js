@@ -38,8 +38,12 @@ const Styled = {
             display: flex;
         }
         & textarea{
+            font-family: monospace;
+            font-size: 16px;
+            font-weight: bolder;
             width: 100%;
             resize: none;
+            padding: 2px 5px;
         }
         & textarea:focus {
             outline: none;
@@ -54,6 +58,12 @@ function CodeEditor({
         onTextChange(e.target.value, id);
     }
 
+    /*
+    TODO: - aplicar linhas sempre que tiver \n (como fazer isso? aplicar direto no texto?)
+          - mudar style da scroll bar
+          - aplicar style pra palavras especiais
+          - Style do reload button
+    */
     return (
         <Styled.CodeEditor>
             <header>
