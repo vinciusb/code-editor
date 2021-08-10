@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
 
@@ -29,6 +29,7 @@ const Styled = {
             margin-right: 10px;
         }
         & .editor {
+            font-size: ${(props) => `${props.fontSize}px`};
             border-bottom-left-radius: ${borderSize}px;
             border-bottom-right-radius: ${borderSize}px;
             width: 100%;
@@ -37,13 +38,29 @@ const Styled = {
 
             display: flex;
         }
+        & .line-indicator {
+            height: 100%;
+            background-color: red;
+            min-width: 1.3em;
+            user-select: none;
+            padding-left: 1px;
+            padding-right: 5px;
+
+            display: flex;
+            flex-flow: column;
+            align-items: flex-end;
+        }
+        & .line-number {
+            line-height: 1em;
+        }
         & textarea{
+            font-size: ${(props) => `${props.fontSize}px`};;
             font-family: monospace;
-            font-size: 16px;
             font-weight: bolder;
             width: 100%;
             resize: none;
             padding: 2px 5px;
+            border: none;
         }
         & textarea:focus {
             outline: none;
@@ -54,16 +71,37 @@ const Styled = {
 function CodeEditor({
     id, lang, code, logo, onTextChange,
 }) {
-    function handleTextChange(e) {
-        onTextChange(e.target.value, id);
+    const [linesNumbers, setLinesNumbers] = useState([1]);
+
+    function changeLineNumber(increase) {
+        const newLines = [...linesNumbers];
+        if(increase) {
+            const next = newLines[newLines.length - 1] + 1;
+            newLines.push(next);
+        }
+        else {
+            newLines.pop();
+        }
+        setLinesNumbers(newLines);
     }
 
-    /*
-    TODO: - aplicar linhas sempre que tiver \n (como fazer isso? aplicar direto no texto?)
-          - mudar style da scroll bar
-          - aplicar style pra palavras especiais
-          - Style do reload button
-    */
+    function handleTextChange(e) {
+        onTextChange(e, id, code, changeLineNumber);
+    }
+
+    function renderLineNumbers() {
+        const list = [];
+        linesNumbers.forEach((line) => {
+            list.push(<div className="line-number">{line}</div>);
+        });
+        return list;
+    }
+
+    /* TODO: - aplicar linhas sempre que tiver \n (como fazer isso? aplicar direto no texto?)
+            - mudar style da scroll bar
+            - aplicar style pra palavras especiais
+            - Style do reload button
+            - Há um jeito mais eficiente de descobrir a linha do editor? */
     return (
         <Styled.CodeEditor>
             <header>
@@ -71,6 +109,9 @@ function CodeEditor({
                 <h1>{ lang.toUpperCase() }</h1>
             </header>
             <div className="editor">
+                <div className="line-indicator">
+                    { renderLineNumbers() }
+                </div>
                 <textarea
                     id={`${lang}-editor`}
                     value={code}

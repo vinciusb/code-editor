@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
+import utils from '../../Utils/utils';
 
 import htmlIcon from './logos/html.png';
 import cssIcon from './logos/css.png';
@@ -40,9 +41,23 @@ function Editors({ transfer, onTransfer }) {
         }
     }, [transfer]);
 
-    function changeSourceCode(code, id) {
+    function changeSourceCode(e, id, lastCode, setLineNumbers) {
+        // Atualiza o texto
+        const code = e.target.value;
         const newCode = sourceCodes.map((element, i) => (i === id ? code : element));
         setSourceCodes(newCode);
+
+        // Atualiza a contagem de linhas
+        const { inputType } = e.nativeEvent;
+        // Se diminuiu o número de linhas
+        if(inputType === 'deleteContentBackward') {
+            const dif = utils.getStringFirstDif(lastCode, code);
+            if(dif === '\n') { setLineNumbers(false); }
+        }
+        // Se aumentou o número de linhas
+        else if(inputType === 'insertLineBreak') {
+            setLineNumbers(true);
+        }
     }
 
     function handleProportionsChange(mouse, id) {
@@ -75,7 +90,6 @@ function Editors({ transfer, onTransfer }) {
 
     function renderCodeEditors() {
         const list = [];
-        console.log(cssIcon);
         const infos = [
             { lang: 'html', logo: htmlIcon, id: 0 },
             { lang: 'css', logo: cssIcon, id: 1 },
@@ -106,7 +120,11 @@ function Editors({ transfer, onTransfer }) {
     }
 
     return (
-        <Styled.Editors ref={editors} proportion={editorsProportion}>
+        <Styled.Editors
+            ref={editors}
+            proportion={editorsProportion}
+            fontSize={16}
+        >
             {renderCodeEditors()}
         </Styled.Editors>
     );
