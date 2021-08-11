@@ -1,8 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
+import utils from '../../Utils/utils';
 
 const borderSize = 8;
+const taPadding = 5;
 
 const Styled = {
     CodeEditor: styled.div`
@@ -39,12 +41,13 @@ const Styled = {
             display: flex;
         }
         & .line-indicator {
-            height: 100%;
             background-color: red;
+            height: 100%;
             min-width: 1.3em;
             user-select: none;
             padding-left: 1px;
             padding-right: 5px;
+            padding-bottom: 3px;
 
             display: flex;
             flex-flow: column;
@@ -55,11 +58,12 @@ const Styled = {
         }
         & textarea{
             font-size: ${(props) => `${props.fontSize}px`};;
-            font-family: monospace;
+            font-family: ${(props) => `${props.font}`};
             font-weight: bolder;
+            line-height: 1em;
             width: 100%;
             resize: none;
-            padding: 2px 5px;
+            padding: 2px ${taPadding}px;
             border: none;
         }
         & textarea:focus {
@@ -67,43 +71,70 @@ const Styled = {
         }
     `,
 };
-
 function CodeEditor({
-    id, lang, code, logo, onTextChange,
+    id, lang, code, logo, onTextChange, font, size,
 }) {
-    const [linesNumbers, setLinesNumbers] = useState([1]);
+    const editor = useRef();
+    const [linesNumbers, setLinesNumbers] = useState(1);
+    const [multilinesNumbers, setMultilinesNumbers] = useState([]);
+    // 1st el.: start line, 2nd: how much lines occuppies
 
-    function changeLineNumber(increase) {
-        const newLines = [...linesNumbers];
+    function calcMultiLines(e) {
+        const editorSize = editor.current.clientWidth - 2 * taPadding;
+        const sizes = utils.calcTextWidths(font, size, e.target.value);
+
+        const list = [];
+        sizes.forEach((size, index) => {
+            const proportion = Math.ceil(size / editorSize);
+            if(proportion > 1) list.push([index, proportion]);
+        });
+    }
+
+    function updateLineNumber(increase) {
+        let newLines = linesNumbers;
         if(increase) {
-            const next = newLines[newLines.length - 1] + 1;
-            newLines.push(next);
+            newLines += 1;
         }
-        else {
-            newLines.pop();
+        else if(linesNumbers > 1) {
+            newLines -= 1;
         }
         setLinesNumbers(newLines);
     }
 
+    function changeLinesCount(e, lastCode, currentCode) {
+        const { inputType } = e.nativeEvent;
+        // If increased the line number
+        if(inputType === 'deleteContentBackward') {
+            const dif = utils.getStringFirstDif(lastCode, currentCode);
+            if(dif === '\n') updateLineNumber(false);
+        }
+        // If decreased the line number
+        else if(inputType === 'insertLineBreak') {
+            updateLineNumber(true);
+        }
+    }
+
     function handleTextChange(e) {
-        onTextChange(e, id, code, changeLineNumber);
+        onTextChange(e, id);
+
+        // Deals with line count change:
+        // Update the lines count
+        changeLinesCount(e, code, e.target.value);
+
+        // Find the multi lines
+        calcMultiLines(e);
     }
 
     function renderLineNumbers() {
         const list = [];
-        linesNumbers.forEach((line) => {
-            list.push(<div className="line-number">{line}</div>);
-        });
+        for(let i = 1; i <= linesNumbers; i++) {
+            list.push(<div className="line-number">{i}</div>);
+        }
         return list;
     }
 
-    /* TODO: - aplicar linhas sempre que tiver \n (como fazer isso? aplicar direto no texto?)
-            - mudar style da scroll bar
-            - aplicar style pra palavras especiais
-            - Style do reload button
-            - Há um jeito mais eficiente de descobrir a linha do editor? */
     return (
-        <Styled.CodeEditor>
+        <Styled.CodeEditor font={font} fontSize={size}>
             <header>
                 <img src={logo} alt="" />
                 <h1>{ lang.toUpperCase() }</h1>
@@ -116,11 +147,21 @@ function CodeEditor({
                     id={`${lang}-editor`}
                     value={code}
                     onChange={handleTextChange}
+                    ref={editor}
                 />
             </div>
         </Styled.CodeEditor>
     );
 }
+
+/* TODO: - aplicar linhas sempre que tiver \n (como fazer isso? aplicar direto no texto?)
+        - mudar style da scroll bar
+        - aplicar style pra palavras especiais
+        - Style do reload button
+        - Há um jeito mais eficiente de descobrir a linha do editor?
+        - Quando exclui um conjunto de conteudo, fazer com que a numeração
+            das linhas mudem tb, e.g. fzr com q a função de diferença de string
+            pegue todas as diferenças e contar qnts \n tem dentro da diferença */
 
 CodeEditor.propTypes = {
     id: PropTypes.number.isRequired,
@@ -128,6 +169,9 @@ CodeEditor.propTypes = {
     code: PropTypes.string.isRequired,
     logo: PropTypes.element.isRequired,
     onTextChange: PropTypes.func.isRequired,
+
+    font: PropTypes.string.isRequired,
+    size: PropTypes.number.isRequired,
 };
 
 export default CodeEditor;

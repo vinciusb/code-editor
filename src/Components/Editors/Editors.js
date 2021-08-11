@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
-import utils from '../../Utils/utils';
 
 import htmlIcon from './logos/html.png';
 import cssIcon from './logos/css.png';
@@ -32,7 +31,10 @@ const Styled = {
 function Editors({ transfer, onTransfer }) {
     const editors = useRef();
     const [sourceCodes, setSourceCodes] = useState(['', '', '']);
-    const [editorsProportion, setEdProportion] = useState([1, 1, 1]);
+    const [editorsProportion, setEdProportion] = useState({
+        p: [1, 1, 1],
+        lastId: 0,
+    });
 
     useEffect(() => {
         // Only when transfer is allowed
@@ -41,27 +43,19 @@ function Editors({ transfer, onTransfer }) {
         }
     }, [transfer]);
 
-    function changeSourceCode(e, id, lastCode, setLineNumbers) {
-        // Atualiza o texto
+    function changeSourceCode(e, id) {
+        // Update the text
         const code = e.target.value;
         const newCode = sourceCodes.map((element, i) => (i === id ? code : element));
         setSourceCodes(newCode);
-
-        // Atualiza a contagem de linhas
-        const { inputType } = e.nativeEvent;
-        // Se diminuiu o número de linhas
-        if(inputType === 'deleteContentBackward') {
-            const dif = utils.getStringFirstDif(lastCode, code);
-            if(dif === '\n') { setLineNumbers(false); }
-        }
-        // Se aumentou o número de linhas
-        else if(inputType === 'insertLineBreak') {
-            setLineNumbers(true);
-        }
     }
 
+    useEffect(() => {
+
+    }, [editorsProportion]);
+
     function handleProportionsChange(mouse, id) {
-        const start = id === 0 ? 0 : editorsProportion[0];
+        const start = id === 0 ? 0 : editorsProportion.p[0];
 
         // Mouse and Content size ignoring padding
         const contentSize = editors.current.clientWidth - 2 * paddingSize;
@@ -69,7 +63,7 @@ function Editors({ transfer, onTransfer }) {
         const normalizedMouse = 3 * (mouseInsideDiv / contentSize) - start;
 
         // Copy proportions
-        const proportions = [...editorsProportion];
+        const proportions = [...editorsProportion.p];
 
         const totalSize = proportions[id] + proportions[id + 1];
 
@@ -85,7 +79,7 @@ function Editors({ transfer, onTransfer }) {
             }
         }
 
-        setEdProportion(proportions);
+        setEdProportion({ p: proportions, lastId: id });
     }
 
     function renderCodeEditors() {
@@ -104,6 +98,8 @@ function Editors({ transfer, onTransfer }) {
                     code={sourceCodes[obj.id]}
                     logo={obj.logo}
                     onTextChange={changeSourceCode}
+                    font="monospace"
+                    size={15}
                 />,
                 (index < infos.length - 1) && (
                     <ResizeBar
@@ -122,7 +118,7 @@ function Editors({ transfer, onTransfer }) {
     return (
         <Styled.Editors
             ref={editors}
-            proportion={editorsProportion}
+            proportion={editorsProportion.p}
             fontSize={16}
         >
             {renderCodeEditors()}
