@@ -55,6 +55,7 @@ const Styled = {
         }
         & .line-number {
             line-height: 1em;
+            min-height: 1em;
         }
         & textarea{
             font-size: ${(props) => `${props.fontSize}px`};;
@@ -76,18 +77,21 @@ function CodeEditor({
 }) {
     const editor = useRef();
     const [linesNumbers, setLinesNumbers] = useState(1);
-    const [multilinesNumbers, setMultilinesNumbers] = useState([]);
+    const [multilinesNumbers, setMultilinesNumbers] = useState([[0, 0]]);
     // 1st el.: start line, 2nd: how much lines occuppies
 
     function calcMultiLines(e) {
         const editorSize = editor.current.clientWidth - 2 * taPadding;
         const sizes = utils.calcTextWidths(font, size, e.target.value);
 
-        const list = [];
-        sizes.forEach((size, index) => {
-            const proportion = Math.ceil(size / editorSize);
-            if(proportion > 1) list.push([index, proportion]);
+        let list = [];
+        sizes.forEach((elSize, index) => {
+            const proportion = Math.ceil(elSize / editorSize);
+            if(proportion > 1) list.push([index + 1, index + proportion]);
         });
+        // If the list is empty
+        if(list.length === 0) list = [[0, 0]];
+        setMultilinesNumbers(list);
     }
 
     function updateLineNumber(increase) {
@@ -127,8 +131,25 @@ function CodeEditor({
 
     function renderLineNumbers() {
         const list = [];
+        let multiIndex = 0;
+
         for(let i = 1; i <= linesNumbers; i++) {
-            list.push(<div className="line-number">{i}</div>);
+            list.push(
+                <div className="line-number">{ i }</div>,
+            );
+            // If it's the multiline
+            if(i === multilinesNumbers[multiIndex][0]) {
+                for(let j = multilinesNumbers[multiIndex][0] + 1;
+                    j <= multilinesNumbers[multiIndex][1]; j++) {
+                    list.push(
+                        <div className="line-number" />,
+                    );
+                }
+                // Verify if there is a next multiline
+                if(multilinesNumbers.length - multiIndex > 1) {
+                    multiIndex += 1;
+                }
+            }
         }
         return list;
     }
@@ -148,16 +169,15 @@ function CodeEditor({
                     value={code}
                     onChange={handleTextChange}
                     ref={editor}
+                    spellCheck="false"
                 />
             </div>
         </Styled.CodeEditor>
     );
 }
 
-/* TODO: - aplicar linhas sempre que tiver \n (como fazer isso? aplicar direto no texto?)
-        - mudar style da scroll bar
+/* TODO: - mudar style da scroll bar
         - aplicar style pra palavras especiais
-        - Style do reload button
         - Há um jeito mais eficiente de descobrir a linha do editor?
         - Quando exclui um conjunto de conteudo, fazer com que a numeração
             das linhas mudem tb, e.g. fzr com q a função de diferença de string
