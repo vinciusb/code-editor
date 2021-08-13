@@ -45,9 +45,7 @@ const Styled = {
             height: 100%;
             min-width: 1.3em;
             user-select: none;
-            padding-left: 1px;
-            padding-right: 5px;
-            padding-bottom: 3px;
+            padding: 2px 5px 3px 1px;
 
             display: flex;
             flex-flow: column;
@@ -55,7 +53,6 @@ const Styled = {
         }
         & .line-number {
             line-height: 1em;
-            min-height: 1em;
         }
         & textarea{
             font-size: ${(props) => `${props.fontSize}px`};;
@@ -70,6 +67,9 @@ const Styled = {
         & textarea:focus {
             outline: none;
         }
+        /* &::-webkit-scrollbar {
+            width: 50px;
+        } */
     `,
 };
 function CodeEditor({
@@ -142,7 +142,7 @@ function CodeEditor({
                 for(let j = multilinesNumbers[multiIndex][0] + 1;
                     j <= multilinesNumbers[multiIndex][1]; j++) {
                     list.push(
-                        <div className="line-number" />,
+                        <div className="line-number">·</div>,
                     );
                 }
                 // Verify if there is a next multiline
@@ -178,7 +178,6 @@ function CodeEditor({
 
 /* TODO: - mudar style da scroll bar
         - aplicar style pra palavras especiais
-        - Há um jeito mais eficiente de descobrir a linha do editor?
         - Quando exclui um conjunto de conteudo, fazer com que a numeração
             das linhas mudem tb, e.g. fzr com q a função de diferença de string
             pegue todas as diferenças e contar qnts \n tem dentro da diferença */

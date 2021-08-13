@@ -37,6 +37,9 @@ const Styled = {
     `,
 };
 
+/* TODO: -Fazer scroll vertical diminuir mesmo com editor maior do q deveria (fazer virar scoll)
+*/
+
 function App() {
     const main = useRef();
     const [sourceCodes, setSourceCodes] = useState(['', '', '']);
