@@ -67,9 +67,18 @@ const Styled = {
         & textarea:focus {
             outline: none;
         }
-        /* &::-webkit-scrollbar {
-            width: 50px;
-        } */
+        & textarea::-webkit-scrollbar {
+            width: 6px;
+            margin-right: 20px;
+            background-color: #F5F5F5;
+        }
+
+        & textarea::-webkit-scrollbar-thumb {
+            border-radius: 4px;
+            -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,.3);
+            background-color: rgb(60,63,84);
+            border: 1px solid white;
+        }
     `,
 };
 function CodeEditor({
@@ -176,7 +185,7 @@ function CodeEditor({
     );
 }
 
-/* TODO: - mudar style da scroll bar
+/* TODO: - aplicar scroll na div do editor toda
         - aplicar style pra palavras especiais
         - Quando exclui um conjunto de conteudo, fazer com que a numeração
             das linhas mudem tb, e.g. fzr com q a função de diferença de string
