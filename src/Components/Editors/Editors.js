@@ -25,6 +25,7 @@ const Styled = {
                       ${props.proportion[1]}fr auto
                       ${props.proportion[2]}fr`};
         justify-content: stretch;
+        overflow: hidden;
     `,
 };
 
@@ -50,6 +51,7 @@ function Editors({ transfer, onTransfer }) {
         setSourceCodes(newCode);
     }
 
+    /* TODO: -Fazer o resize da div fazer as multi lines mudarem */
     useEffect(() => {
 
     }, [editorsProportion]);

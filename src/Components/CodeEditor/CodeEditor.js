@@ -11,6 +11,7 @@ const Styled = {
         display: flex;
         flex-flow: column;
         padding: 10px;
+        overflow: hidden;
 
         & header {
             background-color: rgb(20,21,28);
@@ -36,17 +37,30 @@ const Styled = {
             border-bottom-right-radius: ${borderSize}px;
             width: 100%;
             height: 100%;
-            overflow: hidden;
-
+            overflow-y: scroll;
+            box-sizing: border-box;
+            
             display: flex;
+        }
+        & .editor::-webkit-scrollbar {
+            width: 6px;
+            margin-right: 20px;
+            background-color: #F5F5F5;
+        }
+        & .editor::-webkit-scrollbar-thumb {
+            border-radius: 4px;
+            -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,.3);
+            background-color: rgb(60,63,84);
+            border: 1px solid white;
         }
         & .line-indicator {
             background-color: red;
-            height: 100%;
+            height: fit-content;
+            min-height: 100%;
             min-width: 1.3em;
             user-select: none;
             padding: 2px 5px 3px 1px;
-
+            
             display: flex;
             flex-flow: column;
             align-items: flex-end;
@@ -59,25 +73,15 @@ const Styled = {
             font-family: ${(props) => `${props.font}`};
             font-weight: bolder;
             line-height: 1em;
-            width: 100%;
             resize: none;
+            height: ${(props) => `${props.editorH}px`};
+            width: 100%;
+            
             padding: 2px ${taPadding}px;
             border: none;
         }
         & textarea:focus {
             outline: none;
-        }
-        & textarea::-webkit-scrollbar {
-            width: 6px;
-            margin-right: 20px;
-            background-color: #F5F5F5;
-        }
-
-        & textarea::-webkit-scrollbar-thumb {
-            border-radius: 4px;
-            -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,.3);
-            background-color: rgb(60,63,84);
-            border: 1px solid white;
         }
     `,
 };
@@ -87,6 +91,7 @@ function CodeEditor({
     const editor = useRef();
     const [linesNumbers, setLinesNumbers] = useState(1);
     const [multilinesNumbers, setMultilinesNumbers] = useState([[0, 0]]);
+    const [editorH, setEditorH] = useState([[0, 0]]);
     // 1st el.: start line, 2nd: how much lines occuppies
 
     function calcMultiLines(e) {
@@ -163,8 +168,12 @@ function CodeEditor({
         return list;
     }
 
+    function getScrollHeight(e) {
+        setEditorH(e.target.parentElement.scrollHeight);
+    }
+
     return (
-        <Styled.CodeEditor font={font} fontSize={size}>
+        <Styled.CodeEditor font={font} fontSize={size} editorH={editorH}>
             <header>
                 <img src={logo} alt="" />
                 <h1>{ lang.toUpperCase() }</h1>
@@ -179,17 +188,18 @@ function CodeEditor({
                     onChange={handleTextChange}
                     ref={editor}
                     spellCheck="false"
+                    onInput={getScrollHeight}
                 />
             </div>
         </Styled.CodeEditor>
     );
 }
 
-/* TODO: - aplicar scroll na div do editor toda
+/* TODO:- aplicar scroll na div do editor toda
         - aplicar style pra palavras especiais
-        - Quando exclui um conjunto de conteudo, fazer com que a numeração
-            das linhas mudem tb, e.g. fzr com q a função de diferença de string
-            pegue todas as diferenças e contar qnts \n tem dentro da diferença */
+        - Quando exclui um conjunto de conteudo, fazer com que a numeração das
+           linhas mudem tb, e.g. fzr com q a função de diferença de string
+           pegue todas as diferenças e contar qnts \n tem dentro da diferença */
 
 CodeEditor.propTypes = {
     id: PropTypes.number.isRequired,

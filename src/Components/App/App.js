@@ -20,9 +20,11 @@ const Styled = {
             cursor: pointer;
             background-color: rgb(230, 230, 230);
         }
-
         & > header {
-            height: ${headerSize}px
+            height: ${headerSize}px;
+            font-weight: bold;
+            font-family: monospace;
+            font-size: 2em;
         }
         & > header div {
             height: 100%
@@ -30,6 +32,7 @@ const Styled = {
     `,
     Main: styled.div`
         height: 100%;
+        max-height: 100%;
 
         display: grid;
         grid-template-rows: ${(props) => `${props.proportion[0]}fr auto ${props.proportion[1]}fr`};
@@ -74,7 +77,8 @@ function App() {
     return (
         <Styled.App>
             <header>
-                <div className="button" onClick={injectCode}>RELOAD</div>
+
+                <div className="button" onClick={injectCode}>LOAD CODE</div>
             </header>
             <Styled.Main ref={main} proportion={sectionsProportion}>
                 <Editors transfer={shouldTransfer} onTransfer={getSourceCode} />
