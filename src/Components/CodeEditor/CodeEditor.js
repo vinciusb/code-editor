@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import utils from '../../Utils/utils';
 
-const borderSize = 8;
+const borderRadius = 8;
 const taPadding = 5;
 
 const Styled = {
@@ -11,13 +11,14 @@ const Styled = {
         display: flex;
         flex-flow: column;
         padding: 10px;
-        overflow: hidden;
 
         & header {
             background-color: rgb(20,21,28);
-            border-top-left-radius: ${borderSize}px;
-            border-top-right-radius: ${borderSize}px;
-            padding: 3px 10px 0 10px;
+            border-top-left-radius: ${borderRadius}px;
+            border-top-right-radius: ${borderRadius}px;
+            padding: 3px 10px;
+            overflow: hidden;
+            min-height: fit-content;
 
             display: flex;
             align-items: center;
@@ -33,11 +34,10 @@ const Styled = {
         }
         & .editor {
             font-size: ${(props) => `${props.fontSize}px`};
-            border-bottom-left-radius: ${borderSize}px;
-            border-bottom-right-radius: ${borderSize}px;
+            border-bottom-left-radius: ${borderRadius}px;
+            border-bottom-right-radius: ${borderRadius}px;
             width: 100%;
             height: 100%;
-            overflow-y: scroll;
             box-sizing: border-box;
             
             display: flex;
@@ -57,9 +57,10 @@ const Styled = {
             background-color: red;
             height: fit-content;
             min-height: 100%;
-            min-width: 1.3em;
+            min-width: 1.6em;
             user-select: none;
-            padding: 2px 5px 3px 1px;
+            padding: ${taPadding}px 3px;
+            box-sizing: border-box;
             
             display: flex;
             flex-flow: column;
@@ -68,45 +69,31 @@ const Styled = {
         & .line-number {
             line-height: 1em;
         }
-        & textarea{
-            font-size: ${(props) => `${props.fontSize}px`};;
-            font-family: ${(props) => `${props.font}`};
-            font-weight: bolder;
-            line-height: 1em;
-            resize: none;
-            height: ${(props) => `${props.editorH}px`};
+        & .text-editor {
+            background-color: white;
             width: 100%;
+            height: 100%;
+            padding: ${taPadding}px 3px;
+            box-sizing: border-box;
+
             
-            padding: 2px ${taPadding}px;
-            border: none;
         }
-        & textarea:focus {
-            outline: none;
+        & .view-line {
+            width: 100%;
+            line-height: 1em;
+            color: black;
+            font-size: inherit;
+            font-family: inherit;
+            font-weight: inherit;
+            font-size: ${(props) => `${props.fontSize}px`};
+            text-align: start;
         }
     `,
 };
 function CodeEditor({
     id, lang, code, logo, onTextChange, font, size,
 }) {
-    const editor = useRef();
     const [linesNumbers, setLinesNumbers] = useState(1);
-    const [multilinesNumbers, setMultilinesNumbers] = useState([[0, 0]]);
-    const [editorH, setEditorH] = useState([[0, 0]]);
-    // 1st el.: start line, 2nd: how much lines occuppies
-
-    function calcMultiLines(e) {
-        const editorSize = editor.current.clientWidth - 2 * taPadding;
-        const sizes = utils.calcTextWidths(font, size, e.target.value);
-
-        let list = [];
-        sizes.forEach((elSize, index) => {
-            const proportion = Math.ceil(elSize / editorSize);
-            if(proportion > 1) list.push([index + 1, index + proportion]);
-        });
-        // If the list is empty
-        if(list.length === 0) list = [[0, 0]];
-        setMultilinesNumbers(list);
-    }
 
     function updateLineNumber(increase) {
         let newLines = linesNumbers;
@@ -134,46 +121,39 @@ function CodeEditor({
 
     function handleTextChange(e) {
         onTextChange(e, id);
-
-        // Deals with line count change:
-        // Update the lines count
-        changeLinesCount(e, code, e.target.value);
-
-        // Find the multi lines
-        calcMultiLines(e);
     }
 
     function renderLineNumbers() {
         const list = [];
-        let multiIndex = 0;
 
         for(let i = 1; i <= linesNumbers; i++) {
             list.push(
                 <div className="line-number">{ i }</div>,
             );
-            // If it's the multiline
-            if(i === multilinesNumbers[multiIndex][0]) {
-                for(let j = multilinesNumbers[multiIndex][0] + 1;
-                    j <= multilinesNumbers[multiIndex][1]; j++) {
-                    list.push(
-                        <div className="line-number">·</div>,
-                    );
-                }
-                // Verify if there is a next multiline
-                if(multilinesNumbers.length - multiIndex > 1) {
-                    multiIndex += 1;
-                }
-            }
         }
         return list;
     }
 
-    function getScrollHeight(e) {
-        setEditorH(e.target.parentElement.scrollHeight);
+    function renderTextLines(value) {
+        const list = [];
+        let i = 0;
+        value.forEach((lineText) => {
+            i += 1;
+            list.push(
+                <div className="view-line" key={i}>
+                    { lineText }
+                </div>,
+            );
+        });
+        return list;
     }
 
     return (
-        <Styled.CodeEditor font={font} fontSize={size} editorH={editorH}>
+        <Styled.CodeEditor
+            font={font}
+            fontSize={size}
+            id={`${lang}-editor`}
+        >
             <header>
                 <img src={logo} alt="" />
                 <h1>{ lang.toUpperCase() }</h1>
@@ -182,20 +162,15 @@ function CodeEditor({
                 <div className="line-indicator">
                     { renderLineNumbers() }
                 </div>
-                <textarea
-                    id={`${lang}-editor`}
-                    value={code}
-                    onChange={handleTextChange}
-                    ref={editor}
-                    spellCheck="false"
-                    onInput={getScrollHeight}
-                />
+                <div className="text-editor">
+                    { renderTextLines(code) }
+                </div>
             </div>
         </Styled.CodeEditor>
     );
 }
 
-/* TODO:- aplicar scroll na div do editor toda
+/* TODO:- Mudar como o texto é escrito
         - aplicar style pra palavras especiais
         - Quando exclui um conjunto de conteudo, fazer com que a numeração das
            linhas mudem tb, e.g. fzr com q a função de diferença de string

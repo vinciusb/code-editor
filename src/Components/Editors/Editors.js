@@ -24,14 +24,12 @@ const Styled = {
         ${(props) => `${props.proportion[0]}fr auto
                       ${props.proportion[1]}fr auto
                       ${props.proportion[2]}fr`};
-        justify-content: stretch;
-        overflow: hidden;
     `,
 };
 
 function Editors({ transfer, onTransfer }) {
     const editors = useRef();
-    const [sourceCodes, setSourceCodes] = useState(['', '', '']);
+    const [sourceCodes, setSourceCodes] = useState([['AAAA', 'BB'], [''], ['']]);
     const [editorsProportion, setEdProportion] = useState({
         p: [1, 1, 1],
         lastId: 0,
@@ -50,11 +48,6 @@ function Editors({ transfer, onTransfer }) {
         const newCode = sourceCodes.map((element, i) => (i === id ? code : element));
         setSourceCodes(newCode);
     }
-
-    /* TODO: -Fazer o resize da div fazer as multi lines mudarem */
-    useEffect(() => {
-
-    }, [editorsProportion]);
 
     function handleProportionsChange(mouse, id) {
         const start = id === 0 ? 0 : editorsProportion.p[0];

@@ -77,7 +77,6 @@ function App() {
     return (
         <Styled.App>
             <header>
-
                 <div className="button" onClick={injectCode}>LOAD CODE</div>
             </header>
             <Styled.Main ref={main} proportion={sectionsProportion}>
