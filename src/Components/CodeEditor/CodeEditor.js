@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import utils from '../../Utils/utils';
@@ -22,10 +22,10 @@ const Styled = {
 
             display: flex;
             align-items: center;
+            user-select: none;
         }
         & h1 {
             margin: 0;
-            user-select: none;
         }
         & img {
             height: 35px;
@@ -39,6 +39,7 @@ const Styled = {
             width: 100%;
             height: 100%;
             box-sizing: border-box;
+            overflow: scroll;
             
             display: flex;
         }
@@ -75,25 +76,25 @@ const Styled = {
             height: 100%;
             padding: ${taPadding}px 3px;
             box-sizing: border-box;
-
-            
+            user-select: text;
+            cursor: text;
         }
         & .view-line {
             width: 100%;
             line-height: 1em;
             color: black;
-            font-size: inherit;
-            font-family: inherit;
-            font-weight: inherit;
-            font-size: ${(props) => `${props.fontSize}px`};
             text-align: start;
+        }
+        & .view-line:focus {
+            outline: none;
         }
     `,
 };
+
 function CodeEditor({
     id, lang, code, logo, onTextChange, font, size,
 }) {
-    const [linesNumbers, setLinesNumbers] = useState(1);
+    const [linesNumbers, setLinesNumbers] = useState(10);
 
     function updateLineNumber(increase) {
         let newLines = linesNumbers;
@@ -137,11 +138,17 @@ function CodeEditor({
     function renderTextLines(value) {
         const list = [];
         let i = 0;
+
         value.forEach((lineText) => {
             i += 1;
             list.push(
-                <div className="view-line" key={i}>
-                    { lineText }
+                <div
+                    className="view-line"
+                    key={i}
+                    contentEditable="true"
+                    onChange={null}
+                >
+                    {lineText}
                 </div>,
             );
         });
@@ -170,11 +177,10 @@ function CodeEditor({
     );
 }
 
-/* TODO:- Mudar como o texto é escrito
-        - aplicar style pra palavras especiais
+/* TODO:- aplicar style pra palavras especiais
         - Quando exclui um conjunto de conteudo, fazer com que a numeração das
-           linhas mudem tb, e.g. fzr com q a função de diferença de string
-           pegue todas as diferenças e contar qnts \n tem dentro da diferença */
+            linhas mudem tb, e.g. fzr com q a função de diferença de string
+            pegue todas as diferenças e contar qnts \n tem dentro da diferença */
 
 CodeEditor.propTypes = {
     id: PropTypes.number.isRequired,

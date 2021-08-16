@@ -29,7 +29,7 @@ const Styled = {
 
 function Editors({ transfer, onTransfer }) {
     const editors = useRef();
-    const [sourceCodes, setSourceCodes] = useState([['AAAA', 'BB'], [''], ['']]);
+    const [sourceCodes, setSourceCodes] = useState([['AAAA', 'BB', 'a', 'a', 'a', 'a', 'a', 'a', 'a'], [''], ['']]);
     const [editorsProportion, setEdProportion] = useState({
         p: [1, 1, 1],
         lastId: 0,
