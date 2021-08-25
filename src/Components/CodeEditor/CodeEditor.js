@@ -1,10 +1,16 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
-import utils from '../../Utils/utils';
+
+import 'codemirror/lib/codemirror.css';
+import 'codemirror/theme/material.css';
+import 'codemirror/mode/xml/xml';
+import 'codemirror/mode/javascript/javascript';
+import 'codemirror/mode/css/css';
+
+import { Controlled as ControlledEditor } from 'react-codemirror2';
 
 const borderRadius = 8;
-const taPadding = 5;
 
 const Styled = {
     CodeEditor: styled.div`
@@ -54,105 +60,17 @@ const Styled = {
             background-color: rgb(60,63,84);
             border: 1px solid white;
         }
-        & .line-indicator {
-            background-color: red;
-            height: fit-content;
-            min-height: 100%;
-            min-width: 1.6em;
-            user-select: none;
-            padding: ${taPadding}px 3px;
-            box-sizing: border-box;
-            
-            display: flex;
-            flex-flow: column;
-            align-items: flex-end;
-        }
-        & .line-number {
-            line-height: 1em;
-        }
-        & .text-editor {
-            background-color: white;
+        & .cont-editor {
             width: 100%;
-            height: 100%;
-            padding: ${taPadding}px 3px;
-            box-sizing: border-box;
-            user-select: text;
-            cursor: text;
-        }
-        & .view-line {
-            width: 100%;
-            line-height: 1em;
-            color: black;
-            text-align: start;
-        }
-        & .view-line:focus {
-            outline: none;
         }
     `,
 };
 
 function CodeEditor({
-    id, lang, code, logo, onTextChange, font, size,
+    id, title, lang, code, logo, onTextChange, font, size,
 }) {
-    const [linesNumbers, setLinesNumbers] = useState(10);
-
-    function updateLineNumber(increase) {
-        let newLines = linesNumbers;
-        if(increase) {
-            newLines += 1;
-        }
-        else if(linesNumbers > 1) {
-            newLines -= 1;
-        }
-        setLinesNumbers(newLines);
-    }
-
-    function changeLinesCount(e, lastCode, currentCode) {
-        const { inputType } = e.nativeEvent;
-        // If increased the line number
-        if(inputType === 'deleteContentBackward') {
-            const dif = utils.getStringFirstDif(lastCode, currentCode);
-            if(dif === '\n') updateLineNumber(false);
-        }
-        // If decreased the line number
-        else if(inputType === 'insertLineBreak') {
-            updateLineNumber(true);
-        }
-    }
-
-    function handleTextChange(e) {
-        onTextChange(e, id);
-    }
-
-    function renderLineNumbers() {
-        const list = [];
-
-        for(let i = 1; i <= linesNumbers; i++) {
-            list.push(
-                <div className="line-number">{ i }</div>,
-            );
-        }
-        return list;
-    }
-
-    function renderTextLines(value) {
-        const list = [];
-        let i = 0;
-
-        value.forEach((lineText) => {
-            i += 1;
-            list.push(
-                <div
-                    className="view-line"
-                    key={i}
-                    contentEditable="true"
-                    onChange={null}
-                >
-                    {lineText}
-                </div>,
-            );
-        });
-        return list;
+    function handleTextChange(editor, data, value) {
+        onTextChange(value, id);
     }
 
     return (
@@ -162,28 +80,29 @@ function CodeEditor({
             id={`${lang}-editor`}
         >
             <header>
-                <img src={logo} alt="" />
-                <h1>{ lang.toUpperCase() }</h1>
+                <img src={logo} alt={`${title}-logo`} />
+                <h1>{ title.toUpperCase() }</h1>
             </header>
             <div className="editor">
-                <div className="line-indicator">
-                    { renderLineNumbers() }
-                </div>
-                <div className="text-editor">
-                    { renderTextLines(code) }
-                </div>
+                <ControlledEditor
+                    onBeforeChange={handleTextChange}
+                    value={code}
+                    className="cont-editor"
+                    options={{
+                        lineWrapping: true,
+                        lint: true,
+                        mode: lang,
+                        lineNumbers: true,
+                    }}
+                />
             </div>
         </Styled.CodeEditor>
     );
 }
 
-/* TODO:- aplicar style pra palavras especiais
-        - Quando exclui um conjunto de conteudo, fazer com que a numeração das
-            linhas mudem tb, e.g. fzr com q a função de diferença de string
-            pegue todas as diferenças e contar qnts \n tem dentro da diferença */
-
 CodeEditor.propTypes = {
     id: PropTypes.number.isRequired,
+    title: PropTypes.string.isRequired,
     lang: PropTypes.string.isRequired,
     code: PropTypes.string.isRequired,
     logo: PropTypes.element.isRequired,

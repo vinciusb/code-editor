@@ -29,7 +29,7 @@ const Styled = {
 
 function Editors({ transfer, onTransfer }) {
     const editors = useRef();
-    const [sourceCodes, setSourceCodes] = useState([['AAAA', 'BB', 'a', 'a', 'a', 'a', 'a', 'a', 'a'], [''], ['']]);
+    const [sourceCodes, setSourceCodes] = useState(['', '', '']);
     const [editorsProportion, setEdProportion] = useState({
         p: [1, 1, 1],
         lastId: 0,
@@ -42,10 +42,8 @@ function Editors({ transfer, onTransfer }) {
         }
     }, [transfer]);
 
-    function changeSourceCode(e, id) {
-        // Update the text
-        const code = e.target.value;
-        const newCode = sourceCodes.map((element, i) => (i === id ? code : element));
+    function changeSourceCode(text, id) {
+        const newCode = sourceCodes.map((element, i) => (i === id ? text : element));
         setSourceCodes(newCode);
     }
 
@@ -80,15 +78,22 @@ function Editors({ transfer, onTransfer }) {
     function renderCodeEditors() {
         const list = [];
         const infos = [
-            { lang: 'html', logo: htmlIcon, id: 0 },
-            { lang: 'css', logo: cssIcon, id: 1 },
-            { lang: 'js', logo: jsIcon, id: 2 },
+            {
+                lang: 'xml', title: 'html', logo: htmlIcon, id: 0,
+            },
+            {
+                lang: 'css', title: 'css', logo: cssIcon, id: 1,
+            },
+            {
+                lang: 'js', title: 'js', logo: jsIcon, id: 2,
+            },
         ];
         infos.forEach((obj, index) => {
             list.push(
                 <CodeEditor
                     key={obj.id}
                     id={obj.id}
+                    title={obj.title}
                     lang={obj.lang}
                     code={sourceCodes[obj.id]}
                     logo={obj.logo}
