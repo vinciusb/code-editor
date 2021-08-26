@@ -29,7 +29,21 @@ const Styled = {
 
 function Editors({ transfer, onTransfer }) {
     const editors = useRef();
-    const [sourceCodes, setSourceCodes] = useState(['', '', '']);
+    const [sourceCodes, setSourceCodes] = useState([
+        '<h1 class="muda-cor">MUDO DE COR</h1>',
+        `h1 {
+    font-size: 24px;
+    transition: color 1s ease-out;
+}`,
+        `const h1 = document.getElementsByClassName('muda-cor')[0];
+let mode = false;
+        
+setInterval(() => {
+    const color = mode ? '#AA00AA' : '#AAAA00';
+        mode = !mode;
+        h1.style.color = color;
+}, 1000);`,
+    ]);
     const [editorsProportion, setEdProportion] = useState({
         p: [1, 1, 1],
         lastId: 0,
@@ -85,7 +99,7 @@ function Editors({ transfer, onTransfer }) {
                 lang: 'css', title: 'css', logo: cssIcon, id: 1,
             },
             {
-                lang: 'js', title: 'js', logo: jsIcon, id: 2,
+                lang: 'javascript', title: 'js', logo: jsIcon, id: 2,
             },
         ];
         infos.forEach((obj, index) => {

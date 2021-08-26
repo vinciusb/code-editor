@@ -61,7 +61,7 @@ function App() {
     function handleProportionsChange(mouse, id) {
         // Mouse and Content size ignoring paddings and header
         const contentSize = main.current.clientHeight;
-        const mouseInsideDiv = mouse - headerSize;
+        const mouseInsideDiv = mouse - headerSize < 0 ? 0 : mouse - headerSize;
         const normalizedMouse = 2 * (mouseInsideDiv / contentSize);
 
         // Copy proportions

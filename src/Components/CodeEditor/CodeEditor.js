@@ -39,13 +39,11 @@ const Styled = {
             margin-right: 10px;
         }
         & .editor {
-            font-size: ${(props) => `${props.fontSize}px`};
             border-bottom-left-radius: ${borderRadius}px;
             border-bottom-right-radius: ${borderRadius}px;
             width: 100%;
             height: 100%;
-            box-sizing: border-box;
-            overflow: scroll;
+            overflow: hidden;
             
             display: flex;
         }
@@ -62,6 +60,16 @@ const Styled = {
         }
         & .cont-editor {
             width: 100%;
+            height: 100%;
+        }
+        & .CodeMirror {
+            width: 100%;
+            height: 100%;
+            font-size: ${(props) => `${props.fontSize}px`};
+            font-family: ${(props) => `${props.font}`};
+        }
+        & .CodeMirror-lines {
+            text-align: left;
         }
     `,
 };
@@ -93,6 +101,8 @@ function CodeEditor({
                         lint: true,
                         mode: lang,
                         lineNumbers: true,
+                        scrollbarStyle: null,
+                        tabSize: 4,
                     }}
                 />
             </div>
