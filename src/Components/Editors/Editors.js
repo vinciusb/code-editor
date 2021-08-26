@@ -18,10 +18,11 @@ const Styled = {
         color: white;
         padding: 0 ${paddingSize}px;
         user-select: none;
+        height: 100%;
 
         display: grid;
         grid-template-columns:
-        ${(props) => `${props.proportion[0]}fr auto
+        ${(props) => `500px auto
                       ${props.proportion[1]}fr auto
                       ${props.proportion[2]}fr`};
     `,

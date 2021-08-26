@@ -7,6 +7,7 @@ import 'codemirror/theme/material.css';
 import 'codemirror/mode/xml/xml';
 import 'codemirror/mode/javascript/javascript';
 import 'codemirror/mode/css/css';
+import 'codemirror/addon/selection/active-line';
 
 import { Controlled as ControlledEditor } from 'react-codemirror2';
 
@@ -42,7 +43,7 @@ const Styled = {
             border-bottom-left-radius: ${borderRadius}px;
             border-bottom-right-radius: ${borderRadius}px;
             width: 100%;
-            height: 100%;
+            height: 300px;
             overflow: hidden;
             
             display: flex;
@@ -71,6 +72,9 @@ const Styled = {
         & .CodeMirror-lines {
             text-align: left;
         }
+        & .CodeMirror-activeline-background {
+            background: rgba(20,21,28, 0.1);
+        }
     `,
 };
 
@@ -97,12 +101,13 @@ function CodeEditor({
                     value={code}
                     className="cont-editor"
                     options={{
-                        lineWrapping: true,
+                        lineWrapping: false,
                         lint: true,
                         mode: lang,
                         lineNumbers: true,
                         scrollbarStyle: null,
                         tabSize: 4,
+                        styleActiveLine: { nonEmpty: true },
                     }}
                 />
             </div>
