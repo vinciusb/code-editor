@@ -4,8 +4,9 @@ import styled from 'styled-components';
 import Editors from '../Editors/Editors';
 import CodeCompiler from '../CodeCompiler/CodeCompiler';
 import ResizeBar from '../ResizeBar/ResizeBar';
+import ConfigDiv from '../ConfigDiv/ConfigDiv';
 
-const headerSize = 25;
+const headerSize = 50;
 
 const Styled = {
     App: styled.div`
@@ -16,6 +17,9 @@ const Styled = {
         display: flex;
         flex-flow: column;
 
+        & .button {
+            justify-self: end;
+        }
         & .button:hover {
             cursor: pointer;
             background-color: rgb(230, 230, 230);
@@ -25,6 +29,12 @@ const Styled = {
             font-weight: bold;
             font-family: monospace;
             font-size: 2em;
+            padding: 0 20px;
+
+            display: grid;
+            grid-template-columns: auto 1fr;
+            align-content: center;
+
         }
         & > header div {
             height: 100%
@@ -39,9 +49,6 @@ const Styled = {
         align-items: stretch;
     `,
 };
-
-/* TODO: -Fazer scroll vertical diminuir mesmo com editor maior do q deveria (fazer virar scoll)
-*/
 
 function App() {
     const main = useRef();
@@ -77,6 +84,7 @@ function App() {
     return (
         <Styled.App>
             <header>
+                <ConfigDiv />
                 <div className="button" onClick={injectCode}>LOAD CODE</div>
             </header>
             <Styled.Main ref={main} proportion={sectionsProportion}>
