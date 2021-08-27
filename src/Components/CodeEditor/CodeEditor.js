@@ -8,6 +8,8 @@ import 'codemirror/mode/xml/xml';
 import 'codemirror/mode/javascript/javascript';
 import 'codemirror/mode/css/css';
 import 'codemirror/addon/selection/active-line';
+import 'codemirror/addon/scroll/simplescrollbars';
+import 'codemirror/addon/scroll/simplescrollbars.css';
 
 import { Controlled as ControlledEditor } from 'react-codemirror2';
 
@@ -75,6 +77,15 @@ const Styled = {
         & .CodeMirror-activeline-background {
             background: rgba(20,21,28, 0.1);
         }
+        & .CodeMirror-overlayscroll-horizontal div,
+        .CodeMirror-overlayscroll-vertical div {
+            background: rgb(100,101,108);
+        }
+        & .CodeMirror-simplescroll-horizontal div,
+        .CodeMirror-simplescroll-vertical div {
+            background: rgb(100,101,108);
+            border: 1px solid rgb(80,81,88);
+        }
     `,
 };
 
@@ -101,13 +112,13 @@ function CodeEditor({
                     value={code}
                     className="cont-editor"
                     options={{
+                        mode: lang,
                         lineWrapping: false,
                         lint: true,
-                        mode: lang,
                         lineNumbers: true,
-                        scrollbarStyle: null,
                         tabSize: 4,
                         styleActiveLine: { nonEmpty: true },
+                        scrollbarStyle: 'simple',
                     }}
                 />
             </div>
