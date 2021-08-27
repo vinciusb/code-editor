@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import styled from 'styled-components';
 
 import Editors from '../Editors/Editors';
@@ -42,19 +42,30 @@ const Styled = {
     `,
     Main: styled.div`
         height: 100%;
-        max-height: 100%;
 
         display: grid;
-        grid-template-rows: ${(props) => `${props.proportion[0]}fr auto ${props.proportion[1]}fr`};
+        grid-template-rows: ${({ p, h }) => {
+        const sum = p[0] + p[1];
+        return `${(p[0] / sum) * h}px auto ${(p[1] / sum) * h}px`;
+    }};
         align-items: stretch;
     `,
 };
 
 function App() {
-    const main = useRef();
+    const main = useRef(0);
+    const [h, setH] = useState('1fr');
     const [sourceCodes, setSourceCodes] = useState(['', '', '']);
     const [shouldTransfer, setShouldTransfer] = useState(false);
     const [sectionsProportion, setSectionsProportion] = useState([1, 1]);
+
+    useEffect(() => {
+        setH(main.current.offsetHeight);
+        function handleResize(e) {
+            setH(e.target.innerHeight);
+        }
+        window.addEventListener('resize', handleResize);
+    }, []);
 
     function injectCode() {
         setShouldTransfer(true);
@@ -87,7 +98,7 @@ function App() {
                 <ConfigDiv />
                 <div className="button" onClick={injectCode}>LOAD CODE</div>
             </header>
-            <Styled.Main ref={main} proportion={sectionsProportion}>
+            <Styled.Main ref={main} p={sectionsProportion} h={h}>
                 <Editors transfer={shouldTransfer} onTransfer={getSourceCode} />
                 <ResizeBar id={0} isVertical={false} onPropChange={handleProportionsChange} />
                 <CodeCompiler codes={sourceCodes} />

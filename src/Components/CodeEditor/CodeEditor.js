@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useRef, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
 
@@ -14,12 +14,14 @@ import 'codemirror/addon/scroll/simplescrollbars.css';
 import { Controlled as ControlledEditor } from 'react-codemirror2';
 
 const borderRadius = 8;
+// height={main.current ? main.current.offsetHeight}
 
 const Styled = {
     CodeEditor: styled.div`
         display: flex;
         flex-flow: column;
         padding: 10px;
+        overflow: hidden;
 
         & header {
             background-color: rgb(20,21,28);
@@ -45,7 +47,8 @@ const Styled = {
             border-bottom-left-radius: ${borderRadius}px;
             border-bottom-right-radius: ${borderRadius}px;
             width: 100%;
-            height: 300px;
+            min-height: 100px;
+            /* height: ${(props) => props.h}; */
             overflow: hidden;
             
             display: flex;
@@ -92,6 +95,9 @@ const Styled = {
 function CodeEditor({
     id, title, lang, code, logo, onTextChange, font, size,
 }) {
+    // const ref = useRef();
+    // const height = ref.current ? `${ref.current.offsetHeight}px` : '100%';
+
     function handleTextChange(editor, data, value) {
         onTextChange(value, id);
     }
@@ -101,6 +107,8 @@ function CodeEditor({
             font={font}
             fontSize={size}
             id={`${lang}-editor`}
+            // ref={ref}
+            // h={height}
         >
             <header>
                 <img src={logo} alt={`${title}-logo`} />
