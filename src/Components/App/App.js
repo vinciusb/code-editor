@@ -8,6 +8,7 @@ import ConfigDiv from '../ConfigDiv/ConfigDiv';
 
 const headerSize = 50;
 const minSize = 0.2;
+const resBarSize = 2;
 
 const Styled = {
     App: styled.div`
@@ -64,10 +65,10 @@ function App() {
     // Set on resize handler
     useEffect(() => {
         function handleResize() {
-            setH(main.current.offsetHeight);
+            setH(main.current.offsetHeight - resBarSize);
             setW(main.current.offsetWidth);
         }
-        setH(main.current.offsetHeight);
+        setH(main.current.offsetHeight - resBarSize);
         setW(main.current.offsetWidth);
         window.addEventListener('resize', handleResize);
     }, []);
