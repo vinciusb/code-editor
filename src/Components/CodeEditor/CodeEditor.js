@@ -95,9 +95,6 @@ const Styled = {
 function CodeEditor({
     id, title, lang, code, logo, onTextChange, font, size,
 }) {
-    // const ref = useRef();
-    // const height = ref.current ? `${ref.current.offsetHeight}px` : '100%';
-
     function handleTextChange(editor, data, value) {
         onTextChange(value, id);
     }
@@ -107,8 +104,6 @@ function CodeEditor({
             font={font}
             fontSize={size}
             id={`${lang}-editor`}
-            // ref={ref}
-            // h={height}
         >
             <header>
                 <img src={logo} alt={`${title}-logo`} />

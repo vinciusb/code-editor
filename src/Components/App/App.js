@@ -55,7 +55,8 @@ const Styled = {
 
 function App() {
     const main = useRef(0);
-    const [h, setH] = useState('1fr');
+    const [h, setH] = useState(0);
+    const [w, setW] = useState(0);
     const [sourceCodes, setSourceCodes] = useState(['', '', '']);
     const [shouldTransfer, setShouldTransfer] = useState(false);
     const [sectionsProportion, setSectionsProportion] = useState([1, 1]);
@@ -64,8 +65,10 @@ function App() {
     useEffect(() => {
         function handleResize(e) {
             setH(e.target.innerHeight);
+            setW(e.target.innerWidth);
         }
         setH(main.current.offsetHeight);
+        setW(main.current.offsetWidth);
         window.addEventListener('resize', handleResize);
     }, []);
 
@@ -109,7 +112,7 @@ function App() {
                 <div className="button" onClick={injectCode}>LOAD CODE</div>
             </header>
             <Styled.Main ref={main} p={sectionsProportion} h={h}>
-                <Editors transfer={shouldTransfer} onTransfer={getSourceCode} />
+                <Editors transfer={shouldTransfer} onTransfer={getSourceCode} w={w} />
                 <ResizeBar id={0} isVertical={false} onPropChange={handleProportionsChange} />
                 <CodeCompiler codes={sourceCodes} />
             </Styled.Main>

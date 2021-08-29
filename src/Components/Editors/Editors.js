@@ -9,8 +9,35 @@ import jsIcon from './logos/js.png';
 import CodeEditor from '../CodeEditor/CodeEditor';
 import ResizeBar from '../ResizeBar/ResizeBar';
 
+// Consts values
 const paddingSize = 20;
 const minSize = 0.4;
+const edInfos = [
+    {
+        lang: 'xml', title: 'html', logo: htmlIcon, id: 0,
+    },
+    {
+        lang: 'css', title: 'css', logo: cssIcon, id: 1,
+    },
+    {
+        lang: 'javascript', title: 'js', logo: jsIcon, id: 2,
+    },
+];
+const startText = [
+    '<h1 class="muda-cor">MUDO DE COR</h1>',
+    `h1 {
+        font-size: 24px;
+        transition: color 1s ease-out;
+    }`,
+    `const h1 = document.getElementsByClassName('muda-cor')[0];
+let mode = false;
+        
+setInterval(() => {
+    const color = mode ? '#AA00AA' : '#AAAA00';
+        mode = !mode;
+        h1.style.color = color;
+}, 1000);`,
+];
 
 const Styled = {
     Editors: styled.div`
@@ -21,34 +48,25 @@ const Styled = {
         height: 100%;
 
         display: grid;
-        grid-template-columns:
-        ${(props) => `500px auto
-                      ${props.proportion[1]}fr auto
-                      ${props.proportion[2]}fr`};
+        grid-template-columns: ${({ p, w }) => {
+        const sum = p[0] + p[1] + p[2];
+        return `${(p[0] / sum) * w}px 2px ${(p[1] / sum) * w}px 2px ${(p[2] / sum) * w}px`;
+    }};
     `,
 };
-
-function Editors({ transfer, onTransfer }) {
-    const editors = useRef();
-    const [sourceCodes, setSourceCodes] = useState([
-        '<h1 class="muda-cor">MUDO DE COR</h1>',
-        `h1 {
-    font-size: 24px;
-    transition: color 1s ease-out;
-}`,
-        `const h1 = document.getElementsByClassName('muda-cor')[0];
-let mode = false;
-        
-setInterval(() => {
-    const color = mode ? '#AA00AA' : '#AAAA00';
-        mode = !mode;
-        h1.style.color = color;
-}, 1000);`,
-    ]);
+// e.target.innerWidth
+function Editors({ transfer, onTransfer, w }) {
+    const editors = useRef(0);
+    const [edW, setEdW] = useState(0);
+    const [sourceCodes, setSourceCodes] = useState(startText);
     const [editorsProportion, setEdProportion] = useState({
         p: [1, 1, 1],
         lastId: 0,
     });
+
+    useEffect(() => {
+        setEdW(w - 2 * paddingSize - 4);
+    }, [w]);
 
     useEffect(() => {
         // Only when transfer is allowed
@@ -92,18 +110,7 @@ setInterval(() => {
 
     function renderCodeEditors() {
         const list = [];
-        const infos = [
-            {
-                lang: 'xml', title: 'html', logo: htmlIcon, id: 0,
-            },
-            {
-                lang: 'css', title: 'css', logo: cssIcon, id: 1,
-            },
-            {
-                lang: 'javascript', title: 'js', logo: jsIcon, id: 2,
-            },
-        ];
-        infos.forEach((obj, index) => {
+        edInfos.forEach((obj, index) => {
             list.push(
                 <CodeEditor
                     key={obj.id}
@@ -116,9 +123,9 @@ setInterval(() => {
                     font="monospace"
                     size={15}
                 />,
-                (index < infos.length - 1) && (
+                (index < edInfos.length - 1) && (
                     <ResizeBar
-                        key={obj.id + infos.length}
+                        key={obj.id + edInfos.length}
                         id={obj.id}
                         isVertical
                         onPropChange={handleProportionsChange}
@@ -133,7 +140,8 @@ setInterval(() => {
     return (
         <Styled.Editors
             ref={editors}
-            proportion={editorsProportion.p}
+            p={editorsProportion.p}
+            w={edW}
             fontSize={16}
         >
             {renderCodeEditors()}
@@ -144,6 +152,7 @@ setInterval(() => {
 Editors.propTypes = {
     transfer: PropTypes.bool.isRequired,
     onTransfer: PropTypes.func.isRequired,
+    w: PropTypes.number.isRequired,
 };
 
 export default Editors;
