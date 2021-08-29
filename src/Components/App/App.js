@@ -6,7 +6,6 @@ import CodeCompiler from '../CodeCompiler/CodeCompiler';
 import ResizeBar from '../ResizeBar/ResizeBar';
 import ConfigDiv from '../ConfigDiv/ConfigDiv';
 
-const headerSize = 50;
 const minSize = 0.2;
 const resBarSize = 2;
 
@@ -27,7 +26,7 @@ const Styled = {
             background-color: rgb(230, 230, 230);
         }
         & > header {
-            height: ${headerSize}px;
+            height: 50px;
             font-weight: bold;
             font-family: monospace;
             font-size: 2em;
@@ -85,6 +84,7 @@ function App() {
     function handleProportionsChange(mouse, id) {
         // Mouse and Content size ignoring paddings and header
         const contentSize = main.current.clientHeight;
+        const headerSize = main.current.offsetTop;
         const mouseInsideDiv = mouse - headerSize < 0 ? 0 : mouse - headerSize;
         const normalizedMouse = 2 * (mouseInsideDiv / contentSize);
 
