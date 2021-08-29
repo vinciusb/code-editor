@@ -63,9 +63,9 @@ function App() {
 
     // Set on resize handler
     useEffect(() => {
-        function handleResize(e) {
-            setH(e.target.innerHeight);
-            setW(e.target.innerWidth);
+        function handleResize() {
+            setH(main.current.offsetHeight);
+            setW(main.current.offsetWidth);
         }
         setH(main.current.offsetHeight);
         setW(main.current.offsetWidth);

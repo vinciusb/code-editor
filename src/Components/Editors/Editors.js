@@ -12,6 +12,7 @@ import ResizeBar from '../ResizeBar/ResizeBar';
 // Consts values
 const paddingSize = 20;
 const minSize = 0.4;
+const resBarSize = 2;
 const edInfos = [
     {
         lang: 'xml', title: 'html', logo: htmlIcon, id: 0,
@@ -50,7 +51,7 @@ const Styled = {
         display: grid;
         grid-template-columns: ${({ p, w }) => {
         const sum = p[0] + p[1] + p[2];
-        return `${(p[0] / sum) * w}px 2px ${(p[1] / sum) * w}px 2px ${(p[2] / sum) * w}px`;
+        return `${(p[0] / sum) * w}px ${resBarSize}px ${(p[1] / sum) * w}px ${resBarSize}px ${(p[2] / sum) * w}px`;
     }};
     `,
 };
@@ -65,7 +66,7 @@ function Editors({ transfer, onTransfer, w }) {
     });
 
     useEffect(() => {
-        setEdW(w - 2 * paddingSize - 4);
+        setEdW(w - 2 * paddingSize - 2 * resBarSize);
     }, [w]);
 
     useEffect(() => {
@@ -127,6 +128,7 @@ function Editors({ transfer, onTransfer, w }) {
                     <ResizeBar
                         key={obj.id + edInfos.length}
                         id={obj.id}
+                        size={resBarSize}
                         isVertical
                         onPropChange={handleProportionsChange}
                     />
