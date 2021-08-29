@@ -7,6 +7,7 @@ import ResizeBar from '../ResizeBar/ResizeBar';
 import ConfigDiv from '../ConfigDiv/ConfigDiv';
 
 const headerSize = 50;
+const minSize = 0.2;
 
 const Styled = {
     App: styled.div`
@@ -59,11 +60,12 @@ function App() {
     const [shouldTransfer, setShouldTransfer] = useState(false);
     const [sectionsProportion, setSectionsProportion] = useState([1, 1]);
 
+    // Set on resize handler
     useEffect(() => {
-        setH(main.current.offsetHeight);
         function handleResize(e) {
             setH(e.target.innerHeight);
         }
+        setH(main.current.offsetHeight);
         window.addEventListener('resize', handleResize);
     }, []);
 
@@ -89,6 +91,14 @@ function App() {
         proportions[id] = normalizedMouse;
         proportions[id + 1] = 2 - normalizedMouse;
 
+        // Garants Min size
+        for(let i = 0; i < 2; i++) {
+            if(proportions[id + i] < minSize) {
+                proportions[id + i] = minSize;
+                proportions[id + 1 - i] = 2 - minSize;
+                break;
+            }
+        }
         setSectionsProportion(proportions);
     }
 
