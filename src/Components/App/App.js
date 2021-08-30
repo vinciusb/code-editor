@@ -61,6 +61,7 @@ function App() {
     const [sourceCodes, setSourceCodes] = useState(['', '', '']);
     const [shouldTransfer, setShouldTransfer] = useState(false);
     const [sectionsProportion, setSectionsProportion] = useState([1, 1]);
+    const [editorConfigs, setEditorConfigs] = useState(['Monospace', 12, 4]);
 
     // Set on resize handler
     useEffect(() => {
@@ -107,10 +108,14 @@ function App() {
         setSectionsProportion(proportions);
     }
 
+    function applyConfigs(newConfig) {
+        setEditorConfigs(newConfig);
+    }
+
     return (
         <Styled.App>
             <header>
-                <ConfigDiv />
+                <ConfigDiv configs={editorConfigs} applyConf={applyConfigs} />
                 <GradientButton
                     className="compile-button"
                     text="COMPILAR"
@@ -121,7 +126,12 @@ function App() {
                 />
             </header>
             <Styled.Main ref={main} p={sectionsProportion} h={h}>
-                <Editors transfer={shouldTransfer} onTransfer={getSourceCode} w={w} />
+                <Editors
+                    transfer={shouldTransfer}
+                    onTransfer={getSourceCode}
+                    w={w}
+                    configs={editorConfigs}
+                />
                 <ResizeBar id={0} isVertical={false} onPropChange={handleProportionsChange} />
                 <CodeCompiler codes={sourceCodes} />
             </Styled.Main>
