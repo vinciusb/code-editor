@@ -15,20 +15,20 @@ In the project directory, you can run:
         You will also see any lint errors in the console.
 
 ## Available Features
-`Languages and technologies`
+### `Languages and technologies`
 
         In this project you can develop a web app using the trinity:
             - CSS
             - JS
             - HTML
 
-`Configurate the editor`
+### `Configurate the editor`
 
         You are capable to edit some configurations of the editor just like:
             - Font family
             - Font size
             - Tab size
 
-`Save and upload files`
-        
+### `Save and upload files`
+
         COMING SOON
