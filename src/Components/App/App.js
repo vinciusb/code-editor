@@ -5,6 +5,7 @@ import Editors from '../Editors/Editors';
 import CodeCompiler from '../CodeCompiler/CodeCompiler';
 import ResizeBar from '../ResizeBar/ResizeBar';
 import ConfigDiv from '../ConfigDiv/ConfigDiv';
+import GradientButton from '../GradientButton/GradientButton';
 
 const minSize = 0.2;
 const resBarSize = 2;
@@ -37,8 +38,8 @@ const Styled = {
             align-content: center;
 
         }
-        & > header div {
-            height: 100%
+        & > header .compile-button {
+            justify-self: flex-end;
         }
     `,
     Main: styled.div`
@@ -110,7 +111,14 @@ function App() {
         <Styled.App>
             <header>
                 <ConfigDiv />
-                <div className="button" onClick={injectCode}>LOAD CODE</div>
+                <GradientButton
+                    className="compile-button"
+                    text="COMPILAR"
+                    fontSize={16}
+                    gradStart={[255, 0, 255]}
+                    gradEnd={[0, 130, 255]}
+                    onClick={injectCode}
+                />
             </header>
             <Styled.Main ref={main} p={sectionsProportion} h={h}>
                 <Editors transfer={shouldTransfer} onTransfer={getSourceCode} w={w} />
