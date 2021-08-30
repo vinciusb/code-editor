@@ -27,16 +27,16 @@ const edInfos = [
 const startText = [
     '<h1 class="muda-cor">MUDO DE COR</h1>',
     `h1 {
-        font-size: 24px;
-        transition: color 1s ease-out;
-    }`,
+    font-size: 24px;
+    transition: color 1s ease-out;
+}`,
     `const h1 = document.getElementsByClassName('muda-cor')[0];
 let mode = false;
         
 setInterval(() => {
     const color = mode ? '#AA00AA' : '#AAAA00';
-        mode = !mode;
-        h1.style.color = color;
+    mode = !mode;
+    h1.style.color = color;
 }, 1000);`,
 ];
 
@@ -55,8 +55,10 @@ const Styled = {
     }};
     `,
 };
-// e.target.innerWidth
-function Editors({ transfer, onTransfer, w }) {
+
+function Editors({
+    transfer, onTransfer, w, configs,
+}) {
     const editors = useRef(0);
     const [edW, setEdW] = useState(0);
     const [sourceCodes, setSourceCodes] = useState(startText);
@@ -121,8 +123,9 @@ function Editors({ transfer, onTransfer, w }) {
                     code={sourceCodes[obj.id]}
                     logo={obj.logo}
                     onTextChange={changeSourceCode}
-                    font="monospace"
-                    size={15}
+                    font={configs[0]}
+                    size={configs[1]}
+                    tab={configs[2]}
                 />,
                 (index < edInfos.length - 1) && (
                     <ResizeBar
@@ -155,6 +158,7 @@ Editors.propTypes = {
     transfer: PropTypes.bool.isRequired,
     onTransfer: PropTypes.func.isRequired,
     w: PropTypes.number.isRequired,
+    configs: PropTypes.objectOf.isRequired,
 };
 
 export default Editors;

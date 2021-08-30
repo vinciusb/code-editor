@@ -61,7 +61,7 @@ function App() {
     const [sourceCodes, setSourceCodes] = useState(['', '', '']);
     const [shouldTransfer, setShouldTransfer] = useState(false);
     const [sectionsProportion, setSectionsProportion] = useState([1, 1]);
-    const [editorConfigs, setEditorConfigs] = useState(['Monospace', 12, 4]);
+    const [editorConfigs, setEditorConfigs] = useState(['Monospace', 16, 4]);
 
     // Set on resize handler
     useEffect(() => {

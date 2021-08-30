@@ -1,4 +1,4 @@
-import React, { useRef, useEffect } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
 
@@ -14,7 +14,6 @@ import 'codemirror/addon/scroll/simplescrollbars.css';
 import { Controlled as ControlledEditor } from 'react-codemirror2';
 
 const borderRadius = 8;
-// height={main.current ? main.current.offsetHeight}
 
 const Styled = {
     CodeEditor: styled.div`
@@ -93,7 +92,7 @@ const Styled = {
 };
 
 function CodeEditor({
-    id, title, lang, code, logo, onTextChange, font, size,
+    id, title, lang, code, logo, onTextChange, font, size, tab,
 }) {
     function handleTextChange(editor, data, value) {
         onTextChange(value, id);
@@ -119,7 +118,7 @@ function CodeEditor({
                         lineWrapping: false,
                         lint: true,
                         lineNumbers: true,
-                        tabSize: 4,
+                        tabSize: tab,
                         styleActiveLine: { nonEmpty: true },
                         scrollbarStyle: 'simple',
                     }}
@@ -139,6 +138,7 @@ CodeEditor.propTypes = {
 
     font: PropTypes.string.isRequired,
     size: PropTypes.number.isRequired,
+    tab: PropTypes.number.isRequired,
 };
 
 export default CodeEditor;
