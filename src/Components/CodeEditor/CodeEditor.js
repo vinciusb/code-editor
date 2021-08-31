@@ -133,7 +133,7 @@ CodeEditor.propTypes = {
     title: PropTypes.string.isRequired,
     lang: PropTypes.string.isRequired,
     code: PropTypes.string.isRequired,
-    logo: PropTypes.element.isRequired,
+    logo: PropTypes.elementType.isRequired,
     onTextChange: PropTypes.func.isRequired,
 
     font: PropTypes.string.isRequired,

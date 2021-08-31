@@ -9,6 +9,7 @@ import GradientButton from '../GradientButton/GradientButton';
 
 const minSize = 0.2;
 const resBarSize = 2;
+const allowedExt = ['html', 'css', 'js'];
 
 const Styled = {
     App: styled.div`
@@ -62,6 +63,7 @@ function App() {
     const [shouldTransfer, setShouldTransfer] = useState(false);
     const [sectionsProportion, setSectionsProportion] = useState([1, 1]);
     const [editorConfigs, setEditorConfigs] = useState(['Monospace', 16, 4]);
+    const [importInfo, setImportInfo] = useState({ state: false, index: -1, text: '' });
 
     // Set on resize handler
     useEffect(() => {
@@ -112,10 +114,49 @@ function App() {
         setEditorConfigs(newConfig);
     }
 
+    function importFiles(e) {
+        const file = e.target.files[0];
+        // If file exists
+        if(file) {
+            const fileExt = file.name.split('.').pop();
+
+            // If the extension is one of the alloweds
+            if(allowedExt.some((ext) => ext === fileExt)) {
+                const reader = new FileReader();
+                reader.readAsText(file, 'UTF-8');
+
+                // On file load success
+                reader.onload = (ev) => {
+                    setImportInfo({
+                        state: true,
+                        index: allowedExt.indexOf(fileExt),
+                        text: ev.target.result,
+                    });
+                };
+                // On file load error
+                reader.onerror = (ev) => {
+                    console.log('error');
+                };
+            }
+        }
+    }
+
+    function handleImportEnd() {
+        setImportInfo({
+            state: false,
+            index: -1,
+            text: '',
+        });
+    }
+
     return (
         <Styled.App>
             <header>
-                <ConfigDiv configs={editorConfigs} applyConf={applyConfigs} />
+                <ConfigDiv
+                    configs={editorConfigs}
+                    applyConf={applyConfigs}
+                    importFiles={importFiles}
+                />
                 <GradientButton
                     className="compile-button"
                     text="COMPILAR"
@@ -131,6 +172,8 @@ function App() {
                     onTransfer={getSourceCode}
                     w={w}
                     configs={editorConfigs}
+                    importInfo={importInfo}
+                    onImportEnd={handleImportEnd}
                 />
                 <ResizeBar id={0} isVertical={false} onPropChange={handleProportionsChange} />
                 <CodeCompiler codes={sourceCodes} />

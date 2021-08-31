@@ -57,7 +57,7 @@ const Styled = {
 };
 
 function Editors({
-    transfer, onTransfer, w, configs,
+    transfer, onTransfer, w, configs, importInfo, onImportEnd,
 }) {
     const editors = useRef(0);
     const [edW, setEdW] = useState(0);
@@ -77,6 +77,16 @@ function Editors({
             onTransfer(sourceCodes);
         }
     }, [transfer]);
+
+    useEffect(() => {
+        if(importInfo.state) {
+            const copy = [...sourceCodes];
+            copy[importInfo.index] = importInfo.text;
+            setSourceCodes(copy);
+            // Make sure that import info is clear after import
+            onImportEnd();
+        }
+    }, [importInfo.state]);
 
     function changeSourceCode(text, id) {
         const newCode = sourceCodes.map((element, i) => (i === id ? text : element));
@@ -159,6 +169,8 @@ Editors.propTypes = {
     onTransfer: PropTypes.func.isRequired,
     w: PropTypes.number.isRequired,
     configs: PropTypes.objectOf.isRequired,
+    importInfo: PropTypes.objectOf.isRequired,
+    onImportEnd: PropTypes.func.isRequired,
 };
 
 export default Editors;
