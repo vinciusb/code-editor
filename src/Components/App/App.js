@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import styled from 'styled-components';
+import { saveAs } from 'file-saver';
 
 import Editors from '../Editors/Editors';
 import CodeCompiler from '../CodeCompiler/CodeCompiler';
@@ -64,6 +65,7 @@ function App() {
     const [sectionsProportion, setSectionsProportion] = useState([1, 1]);
     const [editorConfigs, setEditorConfigs] = useState(['Monospace', 16, 4]);
     const [importInfo, setImportInfo] = useState({ state: false, index: -1, text: '' });
+    const [exportInfo, setExportInfo] = useState({ state: false });
 
     // Set on resize handler
     useEffect(() => {
@@ -135,8 +137,12 @@ function App() {
                 };
                 // On file load error
                 reader.onerror = (ev) => {
-                    console.log('error');
+                    console.log('Error on file load');
                 };
+            }
+            // Extension not allowed
+            else {
+                console.log('Extension not allowed');
             }
         }
     }
@@ -149,6 +155,24 @@ function App() {
         });
     }
 
+    function exportFiles(e) {
+        injectCode();
+        const expInfo = { state: true };
+        setExportInfo(expInfo);
+    }
+
+    // Export the files
+    useEffect(() => {
+        if(exportInfo.state) {
+            const htmlFile = new File([sourceCodes[0]], 'index.html', { type: 'text/plain;charset=utf-8' });
+            const cssFile = new File([sourceCodes[1]], 'index.css', { type: 'text/plain;charset=utf-8' });
+            const jsFile = new File([sourceCodes[2]], 'index.js', { type: 'text/plain;charset=utf-8' });
+            saveAs(htmlFile);
+            saveAs(cssFile);
+            saveAs(jsFile);
+        }
+    }, [sourceCodes]);
+
     return (
         <Styled.App>
             <header>
@@ -156,6 +180,7 @@ function App() {
                     configs={editorConfigs}
                     applyConf={applyConfigs}
                     importFiles={importFiles}
+                    exportFiles={exportFiles}
                 />
                 <GradientButton
                     className="compile-button"
